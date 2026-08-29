@@ -70,10 +70,11 @@ class InstalledAppsTests(TestCase):
     def test_rest_framework_is_installed(self):
         self.assertIn("rest_framework", settings.INSTALLED_APPS)
 
-    def test_no_feature_apps_are_installed_yet(self):
+    def test_expected_feature_apps_are_installed(self):
         """
-        Foundation phase ships with no domain apps (e.g. accounts).
-        This test should start failing the moment a feature app is
-        added, which is expected and correct — update it then.
+        Tracks which feature apps have been built so far. Update this
+        list as each new phase adds its app — it is intentionally a
+        strict equality check, not a subset check, so an app being
+        added (or accidentally left out of settings) is caught here.
         """
-        self.assertEqual(settings.LOCAL_APPS, ["apps.core"])
+        self.assertEqual(settings.LOCAL_APPS, ["apps.core", "apps.accounts"])

@@ -49,9 +49,9 @@ THIRD_PARTY_APPS = [
 ]
 
 # Project apps live under apps/ and are added here as they are built.
-# Foundation phase intentionally ships with no domain apps yet.
 LOCAL_APPS = [
     "apps.core",
+    "apps.accounts",
 ]
 
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
@@ -105,6 +105,8 @@ DATABASES = {
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
+AUTH_USER_MODEL = "accounts.User"
+
 # ---------------------------------------------------------------------------
 # Password validation
 # ---------------------------------------------------------------------------
@@ -138,6 +140,7 @@ STATIC_ROOT = BASE_DIR / "staticfiles"
 
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": [
+        "rest_framework_simplejwt.authentication.JWTAuthentication",
         "rest_framework.authentication.SessionAuthentication",
     ],
     "DEFAULT_PERMISSION_CLASSES": [
@@ -149,6 +152,25 @@ REST_FRAMEWORK = {
     "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
     "PAGE_SIZE": 20,
     "DATETIME_FORMAT": "iso-8601",
+}
+
+# ---------------------------------------------------------------------------
+# JWT (Simple JWT)
+# ---------------------------------------------------------------------------
+
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(
+        minutes=config("JWT_ACCESS_TOKEN_LIFETIME_MINUTES", default=15, cast=int)
+    ),
+    "REFRESH_TOKEN_LIFETIME": timedelta(
+        days=config("JWT_REFRESH_TOKEN_LIFETIME_DAYS", default=7, cast=int)
+    ),
+    "ROTATE_REFRESH_TOKENS": True,
+    "BLACKLIST_AFTER_ROTATION": False,
+    "UPDATE_LAST_LOGIN": True,
+    "AUTH_HEADER_TYPES": ("Bearer",),
+    "USER_ID_FIELD": "id",
+    "USER_ID_CLAIM": "user_id",
 }
 
 # ---------------------------------------------------------------------------
