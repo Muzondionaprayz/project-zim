@@ -78,5 +78,6 @@ class InstalledAppsTests(TestCase):
         added (or accidentally left out of settings) is caught here.
         """
         self.assertEqual(
-            settings.LOCAL_APPS, ["apps.core", "apps.accounts", "apps.businesses"]
+            settings.LOCAL_APPS,
+            ["apps.core", "apps.accounts", "apps.businesses", "apps.services"],
         )
