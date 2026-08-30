@@ -77,4 +77,6 @@ class InstalledAppsTests(TestCase):
         strict equality check, not a subset check, so an app being
         added (or accidentally left out of settings) is caught here.
         """
-        self.assertEqual(settings.LOCAL_APPS, ["apps.core", "apps.accounts"])
+        self.assertEqual(
+            settings.LOCAL_APPS, ["apps.core", "apps.accounts", "apps.businesses"]
+        )
