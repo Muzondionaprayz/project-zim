@@ -79,5 +79,11 @@ class InstalledAppsTests(TestCase):
         """
         self.assertEqual(
             settings.LOCAL_APPS,
-            ["apps.core", "apps.accounts", "apps.businesses", "apps.services"],
+            [
+                "apps.core",
+                "apps.accounts",
+                "apps.businesses",
+                "apps.services",
+                "apps.jobs",
+            ],
         )
