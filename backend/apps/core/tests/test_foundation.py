@@ -87,5 +87,6 @@ class InstalledAppsTests(TestCase):
                 "apps.jobs",
                 "apps.marketplace",
                 "apps.search",
+                "apps.messaging",
             ],
         )

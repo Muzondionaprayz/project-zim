@@ -11,6 +11,9 @@ requested transition.
 from django.core.exceptions import ValidationError
 from django.utils import timezone
 
+from apps.messaging.models import Notification
+from apps.messaging.services import notify
+
 from .models import Job, JobApplication
 
 # ---------------------------------------------------------------------------
@@ -71,6 +74,13 @@ def accept_application(application: JobApplication) -> JobApplication:
         )
     application.status = JobApplication.Status.ACCEPTED
     application.save(update_fields=["status", "updated_at"])
+    notify(
+        recipient=application.applicant,
+        notification_type=Notification.NotificationType.JOB_APPLICATION_STATUS_CHANGED,
+        title="Your application was accepted",
+        body=f'Your application for "{application.job.title}" was accepted.',
+        related_job=application.job,
+    )
     return application
 
 
@@ -82,6 +92,13 @@ def reject_application(application: JobApplication) -> JobApplication:
         )
     application.status = JobApplication.Status.REJECTED
     application.save(update_fields=["status", "updated_at"])
+    notify(
+        recipient=application.applicant,
+        notification_type=Notification.NotificationType.JOB_APPLICATION_STATUS_CHANGED,
+        title="Your application was not successful",
+        body=f'Your application for "{application.job.title}" was rejected.',
+        related_job=application.job,
+    )
     return application
 
 

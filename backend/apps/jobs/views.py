@@ -7,6 +7,9 @@ from rest_framework.exceptions import ValidationError as DRFValidationError
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from apps.messaging.models import Notification
+from apps.messaging.services import notify
+
 from . import services
 from .models import Job, JobApplication, JobCategory
 from .permissions import IsApplicationOwner, IsJobOwner
@@ -262,7 +265,14 @@ class MyApplicationListCreateView(generics.ListCreateAPIView):
         ).select_related("job")
 
     def perform_create(self, serializer):
-        serializer.save(applicant=self.request.user)
+        application = serializer.save(applicant=self.request.user)
+        notify(
+            recipient=application.job.employer,
+            notification_type=Notification.NotificationType.JOB_APPLICATION_RECEIVED,
+            title="New job application",
+            body=f'{self.request.user.get_full_name()} applied to "{application.job.title}".',
+            related_job=application.job,
+        )
 
 
 class MyApplicationDetailView(generics.RetrieveAPIView):

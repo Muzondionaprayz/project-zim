@@ -10,6 +10,9 @@ transition/operation.
 
 from django.core.exceptions import ValidationError
 
+from apps.messaging.models import Notification
+from apps.messaging.services import notify
+
 from .models import ListingImage, MarketplaceListing
 
 MAX_IMAGES_PER_LISTING = 10
@@ -55,6 +58,13 @@ def approve_listing(listing: MarketplaceListing, notes: str = "") -> Marketplace
     listing.moderation_status = MarketplaceListing.ModerationStatus.APPROVED
     listing.moderation_notes = notes
     listing.save(update_fields=["moderation_status", "moderation_notes", "updated_at"])
+    notify(
+        recipient=listing.seller,
+        notification_type=Notification.NotificationType.LISTING_MODERATION_RESULT,
+        title="Listing approved",
+        body=f'Your listing "{listing.title}" was approved.',
+        related_listing=listing,
+    )
     return listing
 
 
@@ -64,6 +74,13 @@ def reject_listing(listing: MarketplaceListing, notes: str = "") -> MarketplaceL
     listing.moderation_status = MarketplaceListing.ModerationStatus.REJECTED
     listing.moderation_notes = notes
     listing.save(update_fields=["moderation_status", "moderation_notes", "updated_at"])
+    notify(
+        recipient=listing.seller,
+        notification_type=Notification.NotificationType.LISTING_MODERATION_RESULT,
+        title="Listing rejected",
+        body=f'Your listing "{listing.title}" was rejected.',
+        related_listing=listing,
+    )
     return listing
 
 
@@ -77,6 +94,13 @@ def request_listing_changes(
     listing.moderation_status = MarketplaceListing.ModerationStatus.CHANGES_REQUESTED
     listing.moderation_notes = notes
     listing.save(update_fields=["moderation_status", "moderation_notes", "updated_at"])
+    notify(
+        recipient=listing.seller,
+        notification_type=Notification.NotificationType.LISTING_MODERATION_RESULT,
+        title="Changes requested on your listing",
+        body=f'Changes were requested on your listing "{listing.title}".',
+        related_listing=listing,
+    )
     return listing
 
 
@@ -86,6 +110,13 @@ def suspend_listing(listing: MarketplaceListing, notes: str = "") -> Marketplace
     listing.moderation_status = MarketplaceListing.ModerationStatus.SUSPENDED
     listing.moderation_notes = notes
     listing.save(update_fields=["moderation_status", "moderation_notes", "updated_at"])
+    notify(
+        recipient=listing.seller,
+        notification_type=Notification.NotificationType.LISTING_MODERATION_RESULT,
+        title="Listing suspended",
+        body=f'Your listing "{listing.title}" was suspended.',
+        related_listing=listing,
+    )
     return listing
 
 
@@ -95,6 +126,13 @@ def restore_listing(listing: MarketplaceListing, notes: str = "") -> Marketplace
     listing.moderation_status = MarketplaceListing.ModerationStatus.APPROVED
     listing.moderation_notes = notes
     listing.save(update_fields=["moderation_status", "moderation_notes", "updated_at"])
+    notify(
+        recipient=listing.seller,
+        notification_type=Notification.NotificationType.LISTING_MODERATION_RESULT,
+        title="Listing restored",
+        body=f'Your listing "{listing.title}" was restored.',
+        related_listing=listing,
+    )
     return listing
 
 

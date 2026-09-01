@@ -17,4 +17,6 @@ urlpatterns = [
     path("jobs/", include("apps.jobs.urls")),
     path("marketplace/", include("apps.marketplace.urls")),
     path("search/", include("apps.search.urls")),
+    path("messaging/", include("apps.messaging.urls")),
+    path("notifications/", include("apps.messaging.notification_urls")),
 ]
