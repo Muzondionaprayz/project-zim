@@ -20,4 +20,5 @@ urlpatterns = [
     path("messaging/", include("apps.messaging.urls")),
     path("notifications/", include("apps.messaging.notification_urls")),
     path("reviews/", include("apps.reviews.urls")),
+    path("admin/", include("apps.adminpanel.urls")),
 ]

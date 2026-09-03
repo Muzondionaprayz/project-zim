@@ -10,6 +10,7 @@ transition/operation.
 
 from django.core.exceptions import ValidationError
 
+from apps.adminpanel.services import log_action
 from apps.messaging.models import Notification
 from apps.messaging.services import notify
 
@@ -52,7 +53,7 @@ def unpublish_listing(listing: MarketplaceListing) -> MarketplaceListing:
 # ---------------------------------------------------------------------------
 
 
-def approve_listing(listing: MarketplaceListing, notes: str = "") -> MarketplaceListing:
+def approve_listing(listing: MarketplaceListing, notes: str = "", actor=None) -> MarketplaceListing:
     if listing.moderation_status != MarketplaceListing.ModerationStatus.PENDING:
         raise ValidationError("Only pending listings can be approved.")
     listing.moderation_status = MarketplaceListing.ModerationStatus.APPROVED
@@ -65,10 +66,18 @@ def approve_listing(listing: MarketplaceListing, notes: str = "") -> Marketplace
         body=f'Your listing "{listing.title}" was approved.',
         related_listing=listing,
     )
+    if actor is not None:
+        log_action(
+            actor=actor,
+            action="marketplace_listing.approved",
+            target_type="marketplace_listing",
+            target_id=listing.id,
+            details=notes,
+        )
     return listing
 
 
-def reject_listing(listing: MarketplaceListing, notes: str = "") -> MarketplaceListing:
+def reject_listing(listing: MarketplaceListing, notes: str = "", actor=None) -> MarketplaceListing:
     if listing.moderation_status != MarketplaceListing.ModerationStatus.PENDING:
         raise ValidationError("Only pending listings can be rejected.")
     listing.moderation_status = MarketplaceListing.ModerationStatus.REJECTED
@@ -81,11 +90,19 @@ def reject_listing(listing: MarketplaceListing, notes: str = "") -> MarketplaceL
         body=f'Your listing "{listing.title}" was rejected.',
         related_listing=listing,
     )
+    if actor is not None:
+        log_action(
+            actor=actor,
+            action="marketplace_listing.rejected",
+            target_type="marketplace_listing",
+            target_id=listing.id,
+            details=notes,
+        )
     return listing
 
 
 def request_listing_changes(
-    listing: MarketplaceListing, notes: str = ""
+    listing: MarketplaceListing, notes: str = "", actor=None
 ) -> MarketplaceListing:
     if listing.moderation_status != MarketplaceListing.ModerationStatus.PENDING:
         raise ValidationError(
@@ -101,10 +118,18 @@ def request_listing_changes(
         body=f'Changes were requested on your listing "{listing.title}".',
         related_listing=listing,
     )
+    if actor is not None:
+        log_action(
+            actor=actor,
+            action="marketplace_listing.changes_requested",
+            target_type="marketplace_listing",
+            target_id=listing.id,
+            details=notes,
+        )
     return listing
 
 
-def suspend_listing(listing: MarketplaceListing, notes: str = "") -> MarketplaceListing:
+def suspend_listing(listing: MarketplaceListing, notes: str = "", actor=None) -> MarketplaceListing:
     if listing.moderation_status != MarketplaceListing.ModerationStatus.APPROVED:
         raise ValidationError("Only approved listings can be suspended.")
     listing.moderation_status = MarketplaceListing.ModerationStatus.SUSPENDED
@@ -117,10 +142,18 @@ def suspend_listing(listing: MarketplaceListing, notes: str = "") -> Marketplace
         body=f'Your listing "{listing.title}" was suspended.',
         related_listing=listing,
     )
+    if actor is not None:
+        log_action(
+            actor=actor,
+            action="marketplace_listing.suspended",
+            target_type="marketplace_listing",
+            target_id=listing.id,
+            details=notes,
+        )
     return listing
 
 
-def restore_listing(listing: MarketplaceListing, notes: str = "") -> MarketplaceListing:
+def restore_listing(listing: MarketplaceListing, notes: str = "", actor=None) -> MarketplaceListing:
     if listing.moderation_status != MarketplaceListing.ModerationStatus.SUSPENDED:
         raise ValidationError("Only suspended listings can be restored.")
     listing.moderation_status = MarketplaceListing.ModerationStatus.APPROVED
@@ -133,6 +166,14 @@ def restore_listing(listing: MarketplaceListing, notes: str = "") -> Marketplace
         body=f'Your listing "{listing.title}" was restored.',
         related_listing=listing,
     )
+    if actor is not None:
+        log_action(
+            actor=actor,
+            action="marketplace_listing.restored",
+            target_type="marketplace_listing",
+            target_id=listing.id,
+            details=notes,
+        )
     return listing
 
 

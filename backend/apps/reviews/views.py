@@ -131,7 +131,7 @@ class _ReviewModerationActionView(APIView):
         serializer = ModerationActionSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         try:
-            self.action(review, notes=serializer.validated_data.get("notes", ""))
+            self.action(review, notes=serializer.validated_data.get("notes", ""), actor=request.user)
         except DjangoValidationError as exc:
             raise DRFValidationError(exc.messages)
         return Response(ReviewOwnerSerializer(review).data)

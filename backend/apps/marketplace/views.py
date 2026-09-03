@@ -227,7 +227,7 @@ class _AdminModerationActionView(APIView):
         listing = get_object_or_404(MarketplaceListing, pk=pk)
         notes = request.data.get("notes", "")
         try:
-            self.action(listing, notes=notes)
+            self.action(listing, notes=notes, actor=request.user)
         except DjangoValidationError as exc:
             raise DRFValidationError(exc.messages)
         return Response(MarketplaceListingOwnerSerializer(listing).data)

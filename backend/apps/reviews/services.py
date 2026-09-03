@@ -13,6 +13,8 @@ the Phase 9 requirement to centralize business logic there.
 
 from django.core.exceptions import ValidationError
 
+from apps.adminpanel.services import log_action
+
 from .models import Review
 
 
@@ -77,21 +79,37 @@ def create_review(
     )
 
 
-def hide_review(review: Review, notes: str = "") -> Review:
+def hide_review(review: Review, notes: str = "", actor=None) -> Review:
     """Admin action: hide a published review from public view."""
     if review.status != Review.Status.PUBLISHED:
         raise ValidationError("Only published reviews can be hidden.")
     review.status = Review.Status.HIDDEN
     review.moderation_notes = notes
     review.save(update_fields=["status", "moderation_notes", "updated_at"])
+    if actor is not None:
+        log_action(
+            actor=actor,
+            action="review.hidden",
+            target_type="review",
+            target_id=review.id,
+            details=notes,
+        )
     return review
 
 
-def restore_review(review: Review, notes: str = "") -> Review:
+def restore_review(review: Review, notes: str = "", actor=None) -> Review:
     """Admin action: restore a hidden review back to published."""
     if review.status != Review.Status.HIDDEN:
         raise ValidationError("Only hidden reviews can be restored.")
     review.status = Review.Status.PUBLISHED
     review.moderation_notes = notes
     review.save(update_fields=["status", "moderation_notes", "updated_at"])
+    if actor is not None:
+        log_action(
+            actor=actor,
+            action="review.restored",
+            target_type="review",
+            target_id=review.id,
+            details=notes,
+        )
     return review

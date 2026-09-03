@@ -89,5 +89,6 @@ class InstalledAppsTests(TestCase):
                 "apps.search",
                 "apps.messaging",
                 "apps.reviews",
+                "apps.adminpanel",
             ],
         )

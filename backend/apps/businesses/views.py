@@ -158,7 +158,7 @@ class ApproveBusinessView(APIView):
         serializer.is_valid(raise_exception=True)
         try:
             services.approve_business(
-                business, notes=serializer.validated_data.get("notes", "")
+                business, notes=serializer.validated_data.get("notes", ""), actor=request.user
             )
         except DjangoValidationError as exc:
             raise DRFValidationError(exc.messages)
@@ -176,7 +176,7 @@ class RejectBusinessView(APIView):
         serializer.is_valid(raise_exception=True)
         try:
             services.reject_business(
-                business, notes=serializer.validated_data.get("notes", "")
+                business, notes=serializer.validated_data.get("notes", ""), actor=request.user
             )
         except DjangoValidationError as exc:
             raise DRFValidationError(exc.messages)
@@ -194,7 +194,7 @@ class RequestChangesView(APIView):
         serializer.is_valid(raise_exception=True)
         try:
             services.request_changes(
-                business, notes=serializer.validated_data.get("notes", "")
+                business, notes=serializer.validated_data.get("notes", ""), actor=request.user
             )
         except DjangoValidationError as exc:
             raise DRFValidationError(exc.messages)
@@ -212,7 +212,7 @@ class SuspendBusinessView(APIView):
         serializer.is_valid(raise_exception=True)
         try:
             services.suspend_business(
-                business, notes=serializer.validated_data.get("notes", "")
+                business, notes=serializer.validated_data.get("notes", ""), actor=request.user
             )
         except DjangoValidationError as exc:
             raise DRFValidationError(exc.messages)
@@ -230,7 +230,7 @@ class RestoreBusinessView(APIView):
         serializer.is_valid(raise_exception=True)
         try:
             services.restore_business(
-                business, notes=serializer.validated_data.get("notes", "")
+                business, notes=serializer.validated_data.get("notes", ""), actor=request.user
             )
         except DjangoValidationError as exc:
             raise DRFValidationError(exc.messages)
