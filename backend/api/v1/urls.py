@@ -21,4 +21,5 @@ urlpatterns = [
     path("notifications/", include("apps.messaging.notification_urls")),
     path("reviews/", include("apps.reviews.urls")),
     path("admin/", include("apps.adminpanel.urls")),
+    path("monetization/", include("apps.monetization.urls")),
 ]

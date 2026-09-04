@@ -90,5 +90,6 @@ class InstalledAppsTests(TestCase):
                 "apps.messaging",
                 "apps.reviews",
                 "apps.adminpanel",
+                "apps.monetization",
             ],
         )
